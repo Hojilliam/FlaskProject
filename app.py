@@ -27,7 +27,7 @@ with app.app_context():
 @app.route("/users", methods=['GET'])
 def get_users():
     users = User.query.all()
-    return jsonify(user.to_dict() for user in users)
+    return jsonify([user.to_dict() for user in users])
 
 @app.route("/total_spent/<int:user_id>", methods=['GET'])
 def get_total_spent(user_id):
