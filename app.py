@@ -52,7 +52,7 @@ def delete_user(user_id):
 @app.route("/total_spent/<int:user_id>", methods=['GET'])
 def get_total_spent(user_id):
     total = User.query.get_or_404(user_id)
-    user_data = [total.total_spent, total.id]
+    user_data = {'id': total.total_spent, 'total_spent': total.id}
     return jsonify(user_data)
 
 
