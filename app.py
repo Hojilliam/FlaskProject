@@ -24,6 +24,14 @@ with app.app_context():
     db.create_all()
 
 
+@app.route('/users', methods=['POST'])
+def create_user():
+    data = request.get_json()
+    new_user = User(**data)
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify(new_user.to_dict()), 201
+
 @app.route("/users", methods=['GET'])
 def get_users():
     users = User.query.all()
