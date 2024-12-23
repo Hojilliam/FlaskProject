@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from extensions import db
 from extensions import client
-from models import User
+from models import User, Spending
 
 # Send a ping to confirm a successful connection
 try:
@@ -49,11 +49,15 @@ def get_users():
 #     db.session.commit()
 #     return jsonify({'message': 'User deleted!'})
 
-# @app.route("/total_spent/<int:user_id>", methods=['GET'])
-# def get_total_spent(user_id):
-#     total = User.query.get_or_404(user_id)
-#     user_data = {'total_spent': total.total_spent, 'id': total.id}
-#     return jsonify(user_data)
+@app.route("/total_spent/<int:user_id>", methods=['GET'])
+def get_total_spent(user_id):
+    user = User.query.get_or_404(user_id)
+    spent = Spending.query.filter_by(user_id=user.user_id)
+    data = {
+        'user_id': user.user_id,
+        # 'money_spent': spent.money_spent
+    }
+    return jsonify(data)
 
 
 if __name__ == '__main__':
