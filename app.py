@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from extensions import db
 from extensions import client
 from models import User, Spending
-from sqlalchemy import inspect
+from sqlalchemy import inspect, and_
 
 # Send a ping to confirm a successful connection
 try:
@@ -67,6 +67,43 @@ def get_total_spent(user_id):
 
     return jsonify(data)
 
+@app.route('/average_spending_by_age', methods=['GET'])
+def get_avg_by_age():
+    users18_24 = User.query.filter(and_(User.age >= 18, User.age <= 24)).all()
+    users18_24_list = []
+    for user in users18_24:
+        users18_24_list.append(user.user_id)
+
+    users18_24_spending = 0
+    counter = 0
+    for user_id in users18_24_list:
+        iterator = Spending.query.filter_by(user_id=user_id).all()
+        for value in iterator:
+            users18_24_spending += value.money_spent
+            counter += 1
+    users18_24_spending /= counter
+# --------------------------------------
+    users25_30 = User.query.filter(and_(User.age >= 25, User.age <= 30)).all()
+    users25_30_list = []
+    for user in users25_30:
+        users25_30_list.append(user.user_id)
+
+    users25_30_spending = 0
+    counter = 0
+    for user_id in users25_30_list:
+        iterator = Spending.query.filter_by(user_id=user_id).all()
+        for value in iterator:
+            users25_30_spending += value.money_spent
+            counter += 1
+    users25_30_spending /= counter
+# --------------------------------------
+
+    data = {
+        'age 18 - 24': users18_24_spending,
+        'age 25 - 30': users25_30_spending
+    }
+
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run(debug=True)
