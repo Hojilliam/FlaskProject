@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from extensions import db
 from extensions import client
 from models import User, Spending
+from sqlalchemy import inspect
 
 # Send a ping to confirm a successful connection
 try:
@@ -49,22 +50,21 @@ def get_users():
 #     db.session.commit()
 #     return jsonify({'message': 'User deleted!'})
 
+# Unfinished - returns single value instead of list of all values
 @app.route("/total_spent/<int:user_id>", methods=['GET'])
 def get_total_spent(user_id):
     user = User.query.get_or_404(user_id)
 
-    # all_spending = Spending.query.all()
-    # for record in all_spending:
-    #     print(record.to_dict())
-
-    spent = Spending.query.filter_by(user_id=user.user_id).first_or_404()
-
-    print(type(spent.user_id))
+    spending = Spending.query.filter_by(user_id=user_id).all()
+    total_spent = 0
+    for value in spending:
+        total_spent += value.money_spent
 
     data = {
         'user_id': user.user_id,
-        'money_spent': spent.money_spent
+        'money_spent': total_spent
     }
+
     return jsonify(data)
 
 
