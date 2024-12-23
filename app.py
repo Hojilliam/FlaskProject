@@ -52,10 +52,18 @@ def get_users():
 @app.route("/total_spent/<int:user_id>", methods=['GET'])
 def get_total_spent(user_id):
     user = User.query.get_or_404(user_id)
-    spent = Spending.query.filter_by(user_id=user.user_id)
+
+    # all_spending = Spending.query.all()
+    # for record in all_spending:
+    #     print(record.to_dict())
+
+    spent = Spending.query.filter_by(user_id=user.user_id).first_or_404()
+
+    print(type(spent.user_id))
+
     data = {
         'user_id': user.user_id,
-        # 'money_spent': spent.money_spent
+        'money_spent': spent.money_spent
     }
     return jsonify(data)
 
