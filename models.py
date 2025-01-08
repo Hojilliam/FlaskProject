@@ -25,7 +25,8 @@ class Spending(db.Model):
     def __str__(self):
         return f'{self.user_id} spent {self.money_spent} in {self.year}'
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user_info.user_id'), primary_key=True, nullable=False) #  Seems odd that this is both a foreign and primary key (try removing 'primary key' (doesn't work, crashes app))  # pip install alembic, flask db migrate -m "Add primary key to user_spending", flask db upgrade (for separate id column)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_info.user_id'), nullable=False)
     money_spent = db.Column(db.Float)
     year = db.Column(db.Integer, nullable=False)
 

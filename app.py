@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
-from extensions import db
-from extensions import client
+from extensions import db, client
 from models import User, Spending
 from sqlalchemy import inspect, and_
 
@@ -40,10 +39,11 @@ def get_users():
 def get_total_spent(user_id):
 
     spending = Spending.query.filter_by(user_id=user_id).all()
-    print(spending)
 
-    for spent in spending:
-        print(spent)
+    # print(spending)
+
+    # for spent in spending:
+    #     print(spent)
 
     total_spent = 0
     for value in spending:
