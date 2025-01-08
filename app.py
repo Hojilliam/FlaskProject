@@ -3,6 +3,7 @@ from extensions import db
 from extensions import client
 from models import User, Spending
 from sqlalchemy import inspect, and_
+from functions import get_avg
 
 # Send a ping to confirm a successful connection
 try:
@@ -24,16 +25,6 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-
-def get_avg(user_list):
-    users25_30_spending = 0
-    counter = 0
-    for user_id in user_list:
-        iterator = Spending.query.filter_by(user_id=user_id).all()
-        for value in iterator:
-            users25_30_spending += value.money_spent
-            counter += 1
-    return users25_30_spending / counter
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
