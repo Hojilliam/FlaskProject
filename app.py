@@ -25,13 +25,15 @@ with app.app_context():
     db.create_all()
 
 
-# @app.route('/users', methods=['POST'])
-# def create_user():
-#     data = request.get_json()
-#     new_user = User(**data)
-#     db.session.add(new_user)
-#     db.session.commit()
-#     return jsonify(new_user.to_dict()), 201
+def get_avg(user_list):
+    users25_30_spending = 0
+    counter = 0
+    for user_id in user_list:
+        iterator = Spending.query.filter_by(user_id=user_id).all()
+        for value in iterator:
+            users25_30_spending += value.money_spent
+            counter += 1
+    return users25_30_spending / counter
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
@@ -43,30 +45,29 @@ def get_users():
     users = User.query.all()
     return jsonify([user.to_dict() for user in users])
 
-# @app.route("/users/<int:user_id>", methods=['DELETE'])
-# def delete_user(user_id):
-#     user = User.query.get_or_404(user_id)
-#     db.session.delete(user)
-#     db.session.commit()
-#     return jsonify({'message': 'User deleted!'})
-
 # Unfinished - returns single value instead of list of all values
 @app.route("/total_spent/<int:user_id>", methods=['GET'])
 def get_total_spent(user_id):
-    user = User.query.get_or_404(user_id)
 
     spending = Spending.query.filter_by(user_id=user_id).all()
+
+    print(spending)
+
+    for spent in spending:
+        print(spent)
+
     total_spent = 0
     for value in spending:
         total_spent += value.money_spent
 
     data = {
-        'user_id': user.user_id,
-        'money_spent': total_spent
+        'user_id': user_id,
+        'total_spent': total_spent
     }
 
     return jsonify(data)
 
+# To be modified/shortened again and checked for accuracy
 @app.route('/average_spending_by_age', methods=['GET'])
 def get_avg_by_age():
     users18_24 = User.query.filter(and_(User.age >= 18, User.age <= 24)).all()
@@ -74,33 +75,43 @@ def get_avg_by_age():
     for user in users18_24:
         users18_24_list.append(user.user_id)
 
-    users18_24_spending = 0
-    counter = 0
-    for user_id in users18_24_list:
-        iterator = Spending.query.filter_by(user_id=user_id).all()
-        for value in iterator:
-            users18_24_spending += value.money_spent
-            counter += 1
-    users18_24_spending /= counter
+    age18_24 = get_avg(users18_24_list)
 # --------------------------------------
     users25_30 = User.query.filter(and_(User.age >= 25, User.age <= 30)).all()
     users25_30_list = []
     for user in users25_30:
         users25_30_list.append(user.user_id)
 
-    users25_30_spending = 0
-    counter = 0
-    for user_id in users25_30_list:
-        iterator = Spending.query.filter_by(user_id=user_id).all()
-        for value in iterator:
-            users25_30_spending += value.money_spent
-            counter += 1
-    users25_30_spending /= counter
+    age25_30 = get_avg(users25_30_list)
 # --------------------------------------
+    users31_36 = User.query.filter(and_(User.age >= 31, User.age <= 36)).all()
+    users31_36_list = []
+    for user in users31_36:
+        users31_36_list.append(user.user_id)
+
+    age31_36 = get_avg(users31_36_list)
+# --------------------------------------
+    users37_47 = User.query.filter(and_(User.age >= 37, User.age <= 47)).all()
+    users37_47_list = []
+    for user in users37_47:
+        users37_47_list.append(user.user_id)
+
+    age37_47 = get_avg(users37_47_list)
+# --------------------------------------
+    users47 = User.query.filter(User.age > 47).all()
+    users47_list = []
+    for user in users47:
+        users47_list.append(user.user_id)
+
+    age47 = get_avg(users47_list)
+
 
     data = {
-        'age 18 - 24': users18_24_spending,
-        'age 25 - 30': users25_30_spending
+        'age 18 - 24': round(age18_24, 3),
+        'age 25 - 30': round(age25_30, 3),
+        'age 31 - 36': round(age31_36, 3),
+        'age 37 - 47': round(age37_47, 3),
+        'age 47+': round(age47, 3)
     }
 
     return jsonify(data)
