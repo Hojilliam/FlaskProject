@@ -13,7 +13,7 @@ except Exception as e:
 app = Flask(__name__)
 
 # Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users_vouchers.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/users_vouchers.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the database with the app
@@ -42,8 +42,8 @@ def get_total_spent(user_id):
 
     # print(spending)
 
-    # for spent in spending:
-    #     print(spent)
+    for spent in spending:
+        print(spent)
 
     total_spent = 0
     for value in spending:
