@@ -64,8 +64,8 @@ def get_avg_by_age():
         users_spending = 0
         counter = 0
         for user_id in users:
-            iterator = Spending.query.filter_by(user_id=user_id).all()
-            for value in iterator:
+            base = Spending.query.filter_by(user_id=user_id).all()
+            for value in base:
                 users_spending += value.money_spent
                 counter += 1
         return users_spending / counter
@@ -89,6 +89,7 @@ def get_avg_by_age():
     ]
 
     avg_spending_by_age = {}
+
     for min_age, max_age in age_ranges:
         users = get_users_by_age_range(min_age, max_age)
         avg_spending = calculate_avg_spending(users)
