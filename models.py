@@ -25,8 +25,7 @@ class Spending(db.Model):
     def __str__(self):
         return f'{self.user_id} spent {self.money_spent} in {self.year}'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user_info.user_id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_info.user_id'), primary_key=True, nullable=False)
     money_spent = db.Column(db.Float)
     year = db.Column(db.Integer, nullable=False)
 

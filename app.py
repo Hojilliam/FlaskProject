@@ -13,7 +13,7 @@ except Exception as e:
 app = Flask(__name__)
 
 # Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/users_vouchers.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users_vouchers.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the database with the app
