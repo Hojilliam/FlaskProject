@@ -40,11 +40,6 @@ def get_total_spent(user_id):
 
     spending = Spending.query.filter_by(user_id=user_id).all()
 
-    # print(spending)
-
-    for spent in spending:
-        print(spent)
-
     total_spent = 0
     for value in spending:
         total_spent += value.money_spent
@@ -98,6 +93,26 @@ def get_avg_by_age():
 
     return jsonify(avg_spending_by_age)
 
+@app.route('/write_to_mongodb', methods=['POST'])
+def write_to_mongodb():
+
+    input = request.json
+
+    user = User.query.get_or_404(input['user_id'])
+
+    db = client['users_vouchers']
+    collection = db['vouchers']
+
+    try:
+        data = {
+            'user': user.to_dict(),
+            'total_spent': input['total_spent']
+        }
+        collection.insert_one(data)
+    except KeyError:
+        return 'Failed to add data to MongoDB! Missing or invalid key!', 500
+
+    return 'Added data to MongoDB!', 201
 
 if __name__ == '__main__':
     app.run(debug=True)
