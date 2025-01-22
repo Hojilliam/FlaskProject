@@ -93,6 +93,7 @@ def get_avg_by_age():
 
     return jsonify(avg_spending_by_age)
 
+# Unfinished - check for duplicate entries
 @app.route('/write_to_mongodb', methods=['POST'])
 def write_to_mongodb():
 
@@ -110,7 +111,7 @@ def write_to_mongodb():
         }
         collection.insert_one(data)
     except KeyError:
-        return 'Failed to add data to MongoDB! Missing or invalid key!', 500
+        return 'Failed to add data to MongoDB! Missing or invalid keys!', 500
 
     return 'Added data to MongoDB!', 201
 
