@@ -1,7 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify
 from extensions import db, client
 from models import User, Spending
-from sqlalchemy import inspect, and_
+from sqlalchemy import and_
 
 # Send a ping to confirm a successful connection
 try:
