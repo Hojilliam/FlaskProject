@@ -114,36 +114,13 @@ def write_to_mongodb():
                 'total_spent': get_user_spent(user.user_id)
             }
             if get_user_spent(user.user_id) > 1000:
-                collection.insert_one(data)
+                if not user:
+                    collection.insert_one(data)
     except Exception as e:
         return f'Failed to add data to MongoDB! {e}', 500
 
     return 'Added user data to MongoDB!', 201
 
-@app.route('/update_mongodb', methods=['PUT'])
-def update_mongodb():
-
-    users = User.query.all()
-
-    db = client['test']
-    collection = db['vouchers']
-
-    try:
-        for user in users:
-            data = {
-                'user': user.to_dict(),
-                'total_spent': get_user_spent(user.user_id)
-            }
-            if get_user_spent(user.user_id) > 1000:
-                collection.update_one(
-                    {'user_id': user.to_dict()},
-                    {'$set': data},
-                    # upsert=True
-                )
-    except Exception as e:
-        return f'Failed to update data in MongoDB! {e}', 500
-
-    return 'Updated user data in MongoDB!', 201
 
 if __name__ == '__main__':
     app.run(debug=True)
