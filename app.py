@@ -23,6 +23,12 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+def get_user_spent(user_id):
+    spending = Spending.query.filter_by(user_id=user_id).all()
+    total_spent = 0
+    for value in spending:
+        total_spent += value.money_spent
+    return total_spent
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
@@ -93,27 +99,51 @@ def get_avg_by_age():
 
     return jsonify(avg_spending_by_age)
 
-# Unfinished - check for duplicate entries
 @app.route('/write_to_mongodb', methods=['POST'])
 def write_to_mongodb():
 
-    input = request.json
+    users = User.query.all()
 
-    user = User.query.get_or_404(input['user_id'])
-
-    db = client['users_vouchers']
+    db = client['test']
     collection = db['vouchers']
 
     try:
-        data = {
-            'user': user.to_dict(),
-            'total_spent': input['total_spent']
-        }
-        collection.insert_one(data)
-    except KeyError:
-        return 'Failed to add data to MongoDB! Missing or invalid keys!', 500
+        for user in users:
+            data = {
+                'user': user.to_dict(),
+                'total_spent': get_user_spent(user.user_id)
+            }
+            if get_user_spent(user.user_id) > 1000:
+                collection.insert_one(data)
+    except Exception as e:
+        return f'Failed to add data to MongoDB! {e}', 500
 
-    return 'Added data to MongoDB!', 201
+    return 'Added user data to MongoDB!', 201
+
+@app.route('/update_mongodb', methods=['PUT'])
+def update_mongodb():
+
+    users = User.query.all()
+
+    db = client['test']
+    collection = db['vouchers']
+
+    try:
+        for user in users:
+            data = {
+                'user': user.to_dict(),
+                'total_spent': get_user_spent(user.user_id)
+            }
+            if get_user_spent(user.user_id) > 1000:
+                collection.update_one(
+                    {'user_id': user.to_dict()},
+                    {'$set': data},
+                    # upsert=True
+                )
+    except Exception as e:
+        return f'Failed to update data in MongoDB! {e}', 500
+
+    return 'Updated user data in MongoDB!', 201
 
 if __name__ == '__main__':
     app.run(debug=True)
