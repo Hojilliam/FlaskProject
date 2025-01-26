@@ -40,7 +40,6 @@ def get_users():
     users = User.query.all()
     return jsonify([user.to_dict() for user in users])
 
-# Unfinished - returns single value instead of list of all values
 @app.route("/total_spent/<int:user_id>", methods=['GET'])
 def get_total_spent(user_id):
 
@@ -57,7 +56,6 @@ def get_total_spent(user_id):
 
     return jsonify(data)
 
-# To be checked for accuracy
 @app.route('/average_spending_by_age', methods=['GET'])
 def get_avg_by_age():
 
