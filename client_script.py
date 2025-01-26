@@ -27,7 +27,6 @@ def get_avg_spending_by_age():
         return None
 
 def main():
-    # Example user IDs to retrieve total spending
     while True:
         try:
             user_id = int(input('Enter user ID: '))
