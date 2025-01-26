@@ -102,7 +102,7 @@ def write_to_mongodb():
 
     users = User.query.all()
 
-    db = client['test']
+    db = client['users_vouchers']
     collection = db['vouchers']
 
     try:
@@ -112,7 +112,8 @@ def write_to_mongodb():
                 'total_spent': get_user_spent(user.user_id)
             }
             if get_user_spent(user.user_id) > 1000:
-                if not user:
+                # if not user:
+                if not collection.find_one({'user.user_id': user.user_id}):  # Check if user exists in MongoDB
                     collection.insert_one(data)
     except Exception as e:
         return f'Failed to add data to MongoDB! {e}', 500
