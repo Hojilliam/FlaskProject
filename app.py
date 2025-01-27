@@ -23,13 +23,6 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-def get_user_spent(user_id):
-    spending = Spending.query.filter_by(user_id=user_id).all()
-    total_spent = 0
-    for value in spending:
-        total_spent += value.money_spent
-    return total_spent
-
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     user = User.query.get_or_404(user_id)
@@ -99,6 +92,13 @@ def get_avg_by_age():
 
 @app.route('/write_to_mongodb', methods=['POST'])
 def write_to_mongodb():
+
+    def get_user_spent(user_id):
+        spending = Spending.query.filter_by(user_id=user_id).all()
+        total_spent = 0
+        for value in spending:
+            total_spent += value.money_spent
+        return total_spent
 
     users = User.query.all()
 
